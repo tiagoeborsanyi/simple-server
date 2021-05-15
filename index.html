@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To DO</title>
+</head>
+<body>
+  <h2>Adicionar notas</h2>
+  <form action="#">
+    <input type="text" placeholder="add nota" id="myInput">
+    <button onclick="newElement()">ADD</button>
+  </form>
+
+  <ul id="myUl"></ul>
+
+  <script>
+    fetch('http://localhost:5000', {method: 'GET'})
+      .then(async res => {
+        const data = await res.json()
+        console.log(data)
+        for (let key of data.notas) {
+          let li = document.createElement("li")
+          const t = document.createTextNode(key)
+          li.appendChild(t)
+          document.getElementById("myUl").appendChild(li)
+          console.log(key)
+        }
+        
+      })
+      .catch(err => console.log(err))
+
+    function newElement() {
+      let inputValue = document.getElementById("myInput").value;
+      if (inputValue.length === 0) {
+        return alert('insira dados para adicionar uma nota.')
+      }
+      fetch('http://localhost:5000', {
+        method: 'POST', 
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify({'data': inputValue})})
+      .then(async res => {
+        const data = await res.json()
+        console.log(data)
+        let li = document.createElement("li")
+        const t = document.createTextNode(data[data.length - 1])
+        li.appendChild(t)
+        document.getElementById("myUl").appendChild(li)
+        
+      })
+      .catch(err => console.log(err))
+    }
+  </script>
+</body>
+</html>
